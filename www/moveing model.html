@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>canvas</title>
+</head>
+<style>
+	#canvas{
+		background-color: #fff
+	}
+	body{
+		background-color: green
+	}
+</style>
+<script>
+window.onload = function() {
+	let canvas = document.getElementById('canvas')
+  let ctx = canvas.getContext('2d')
+
+  let img = new Image()
+  img.src = '1.jpg'
+
+ 
+    img.onload = function() {
+      let frame = 0 // 列 控制行走动作
+      let d = 'down' // 行 控制行走朝向
+      let x = 100
+      let y = 100
+      let speed = 10
+      document.onkeydown = function(event) {
+        // switch(event.keyCode) {
+        //   case 87 || 38:
+        //     d = 'up'
+        //     break;
+        //   case 83 || 40:
+        //     d = 'down'
+        //     break;
+        //   case 65 || 37:
+        //     d = 'left'
+        //     break;
+        //   case 68 || 39:
+        //     d = 'right'
+        //     break;
+        // }
+        let keys = {87:'up', 83:'down', 65:'left', 68:'right'}
+        let keys2 = {38:'up', 40:'down', 37:'left', 39:'right'}
+        d = keys[event.keyCode] || d || keys2[event.keyCode]
+      }
+      setInterval(() => {
+        let rows = {'down': 0, 'left': 1, 'right': 2, 'up': 3}
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(img, 10 + 94*frame, 100 * rows[d], 70, 90, x, y, 70, 90)
+        if (x < 0) {
+          x = 0
+          frame = 2
+        } 
+        console.log(canvas.width)
+        if (x > canvas.width-70) {
+          x = canvas.width-70
+          frame = 2
+        }
+        if (y < 0) {
+          y = canvas.height
+          
+        } else if (y > canvas.height) {
+          y = 0
+          
+        }
+        switch (d) {
+          case 'down':
+            y += speed
+            break;
+          case 'up':
+            y -= speed
+            break;
+          case 'left':
+            x -= speed
+            break;
+          case 'right':
+            x += speed
+            break
+        }
+        frame++
+        if (frame === 3) {
+          frame = 0
+        }
+      }, 100)  
+    }
+  
+  
+}
+
+		
+			
+
+</script>
+<body>
+	<canvas width="800" height="600" id="canvas">
+		你的浏览器不支持canvas，请升级浏览器
+	</canvas>
+</body>
+</html>

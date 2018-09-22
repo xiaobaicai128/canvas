@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+  <style>
+    body {
+            padding: 0;
+            margin: 0;
+            background-color: rgba(0, 0, 0, 0.1)
+        }
+
+        canvas {
+            display: block;
+            margin: 200px auto;
+        }
+  </style>
+  <script>
+  window.onload = function() {
+    let canvas = document.getElementsByTagName('canvas')[0]
+    let ctx = canvas.getContext('2d')
+    draw(ctx)
+    function draw(ctx) {
+      requestAnimationFrame(function step() {
+        drawDeil(ctx) // 表盘
+        drawAllHand(ctx) // 指针
+        requestAnimationFrame(step) // 回调
+      })
+    }
+    function drawAllHand(ctx) {
+      //得到时分秒
+      let time = new Date()
+      let s = time.getSeconds()
+      let m = time.getMinutes()
+      let h = time.getHours()
+      // 得到指针的弧度
+      let pi = Math.PI 
+      let secondAngle = pi / 180 * s * 360 / 60
+      let minuteAngle = pi / 180 * m * 360 / 60 + secondAngle / 60
+      let hourAngle = pi / 180 *h *360 / 12 + minuteAngle / 12
+
+      //drawHand(指针弧度, 指针长度, 指针宽度, 颜色, ctx);  //绘制指针
+      drawHand(hourAngle, 60, 6, "red", ctx);  //绘制时针
+      drawHand(minuteAngle, 106, 4, "green", ctx);  //绘制分针
+      drawHand(secondAngle, 129, 2, "blue", ctx);  //绘制秒针
+    }
+    function drawHand(angle, len, width, color, ctx) {
+      ctx.save()
+      ctx.translate(150, 150) // 原点转移到canvas中心
+      // 弧度与角度的0相差九十度，角度顺时针转90（-90）与弧度重合
+      ctx.rotate(-90 * Math.PI / 180 + angle);  //旋转坐标轴。 x轴就是针
+      ctx.beginPath() // 绘制之前先清除路径
+      ctx.moveTo(-4, 0) // 以新原点为基点
+      ctx.lineTo(len, 0) // x周就是指针，所以与x重合即可
+      ctx.strokeStyle = color
+      ctx.lineWidth = width
+      ctx.stroke()
+      ctx.closePath()
+      ctx.restore()
+    }
+    // 绘制表盘
+    function drawDeil(ctx) {
+      let pi = Math.PI
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.save()
+
+      ctx.translate(150, 150) // 原点转移到canvas中心
+      ctx.beginPath()
+      ctx.arc(0, 0, 148, 0, 2 * pi) // 绘制圆周
+      ctx.stroke()
+      ctx.closePath()
+
+      // 绘制刻度
+      for(let i = 0; i < 60; i++) {
+        ctx.save()
+        ctx.rotate(-90 * pi / 180 + i * 360 / 60 * pi / 180)
+        ctx.beginPath()
+        ctx.moveTo(110, 0)
+        ctx.lineTo(140, 0)
+        ctx.lineWidth = i % 5 === 0 ? 4 : 2
+        ctx.strokeStyle = i % 5 === 0 ? 'red' : 'blue'
+        ctx.stroke()
+        ctx.closePath()
+        ctx.restore()
+      }
+      ctx.restore()
+    }
+  }
+
+  </script>
+</head>
+<body>
+<canvas width="300" height="300">请更新浏览器</canvas>
+</body>
+</html>
